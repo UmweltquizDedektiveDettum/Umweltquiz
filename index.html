@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Umweltquiz für Umweltdetektive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    html {
+      font-size: 20px;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .quiz-page {
+      display: none;
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+    body {
+      font-family: 'Fredoka', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f8ff;
+    }
+    .quiz-page {
+      display: none;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+    }
+    .quiz-page.active {
+      display: block;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 1rem;
+      margin: 1rem 0;
+    }
+    .buttons button {
+      font-size: 1.5rem;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .buttons button:hover {
+      background-color: #b3e5fc;
+    }
+    .explanation {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+    }
+    .team-entry {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .team-entry button.active {
+      background-color: #81c784;
+    }
+  </style>
+</head>
+<body>
+
+<div id="quiz-container"></div>
+
+<script>
+  const questions = [
+    {
+      text: "Plastikmüll im Meer ist ein toller Spielplatz für Fische.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Marine_debris.jpg",
+      correct: false,
+      explanation: "Falsch! Plastik ist gefährlich für Fische. Sie können es fressen und krank werden."
+    },
+    {
+      text: "Bäume sind wichtig, weil sie unsere Luft sauber machen.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/2/25/Wald.jpg",
+      correct: true,
+      explanation: "Richtig! Bäume nehmen CO2 auf und produzieren Sauerstoff."
+    },
+    {
+      text: "Wenn ich den Wasserhahn anlasse, spare ich Wasser.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Water_tap.jpg",
+      correct: false,
+      explanation: "Falsch! Wasser verschwenden ist nicht gut für unsere Umwelt."
+    },
+    {
+      text: "Regenwürmer helfen beim Kompostieren.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Eisenia_fetida.jpg",
+      correct: true,
+      explanation: "Richtig! Regenwürmer verwandeln Bioabfall in guten Boden."
+    },
+    {
+      text: "Alte Batterien darf man in den Hausmüll werfen.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/4/41/Batteries.jpg",
+      correct: false,
+      explanation: "Falsch! Batterien enthalten Schadstoffe und müssen extra entsorgt werden."
+    },
+    {
+      text: "Papier kann man mehrmals recyceln.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/34/Recycle_paper.jpg",
+      correct: true,
+      explanation: "Richtig! Papier kann bis zu 6 Mal recycelt werden."
+    },
+    {
+      text: "Autofahren ist besser für die Umwelt als Fahrradfahren.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Bicycle_icon.svg",
+      correct: false,
+      explanation: "Falsch! Fahrradfahren verursacht keinen CO2-Ausstoß."
+    },
+    {
+      text: "Mülltrennung ist eine gute Idee.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/6/64/Muelltonnen_Muenchen.jpg",
+      correct: true,
+      explanation: "Richtig! Getrennter Müll kann besser recycelt werden."
+    },
+    {
+      text: "Strom aus der Steckdose ist unendlich da.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Steckdose.jpg",
+      correct: false,
+      explanation: "Falsch! Strom wird produziert und kostet Energie."
+    },
+    {
+      text: "Solarzellen machen aus Sonne Strom.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Solar_panels.jpg",
+      correct: true,
+      explanation: "Richtig! Solarzellen nutzen Sonnenenergie zur Stromerzeugung."
+    },
+    {
+      text: "Man sollte den Computer beim Verlassen des Raums anlassen.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Computer_power_off.jpg",
+      correct: false,
+      explanation: "Falsch! Besser ist es, den Computer auszuschalten, um Strom zu sparen."
+    },
+    {
+      text: "Mehrwegflaschen sind besser als Einwegflaschen.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/39/Mehrwegflaschen.jpg",
+      correct: true,
+      explanation: "Richtig! Mehrwegflaschen können viele Male wiederverwendet werden."
+    },
+    {
+      text: "Einkaufen mit Plastiktüten ist besonders umweltfreundlich.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Plastic_bag.jpg",
+      correct: false,
+      explanation: "Falsch! Wiederverwendbare Taschen sind viel besser für die Umwelt."
+    },
+    {
+      text: "Man kann Energie sparen, indem man das Licht ausmacht.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Light_switch.jpg",
+      correct: true,
+      explanation: "Richtig! Licht ausschalten spart Energie."
+    },
+    {
+      text: "Wenn ich eine Biene sehe, sollte ich sie erschrecken.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/4/49/Honeybee_on_flower.jpg",
+      correct: false,
+      explanation: "Falsch! Bienen sind wichtig für die Bestäubung von Pflanzen."
+    },
+    {
+      text: "Plastik braucht hunderte Jahre zum Verrotten.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/5/5d/Plastic_waste.jpg",
+      correct: true,
+      explanation: "Richtig! Plastik bleibt sehr lange in der Natur."
+    },
+    {
+      text: "Ein Spaziergang im Wald ist schlecht für die Umwelt.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Walking_in_the_forest.jpg",
+      correct: false,
+      explanation: "Falsch! Ein Spaziergang schadet der Natur nicht, solange man keinen Müll hinterlässt."
+    },
+    {
+      text: "Recycling spart Rohstoffe.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Recycling_symbol.svg",
+      correct: true,
+      explanation: "Richtig! Beim Recycling werden alte Materialien wiederverwendet."
+    },
+    {
+      text: "Es ist gut, wenn das Auto für ganz kurze Strecken genutzt wird.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Short_car_trips.jpg",
+      correct: false,
+      explanation: "Falsch! Für kurze Wege ist Laufen oder Radfahren besser."
+    },
+    {
+      text: "Jeder kann etwas für die Umwelt tun.",
+      image: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Green_hand_icon.svg",
+      correct: true,
+      explanation: "Richtig! Auch kleine Taten helfen unserer Umwelt."
+    }
+  ];
+
+  let current = 0;
+  const container = document.getElementById("quiz-container");
+
+  function loadQuestion(index) {
+    const q = questions[index];
+    container.innerHTML = `
+      <div class="quiz-page active">
+        <h2>Frage ${index + 1} für Team A und Team B</h2>
+        <p>${q.text}</p>
+        <img src="${q.image}" alt="Bild zur Frage" />
+        <div class="team-entry">
+          <button onclick="selectTeam(this, 'A')">Team A</button>
+          <button onclick="selectTeam(this, 'B')">Team B</button>
+        </div>
+        <div class="buttons">
+          <button onclick="checkAnswer(true, ${q.correct})">Wahr</button>
+          <button onclick="checkAnswer(false, ${q.correct})">Falsch</button>
+        </div>
+        <div class="explanation" id="explanation"></div>
+        <button onclick="nextQuestion()" style="margin-top:2rem;">Nächste Frage</button>
+      </div>
+    `;
+  }
+
+  let teamAnswers = {};
+function checkAnswer(answer, correct) {
+  const activeTeam = document.querySelector('.team-entry button.active');
+  if (!activeTeam) {
+    alert("Bitte wählt zuerst ein Team aus!");
+    return;
+  }
+  const team = activeTeam.textContent.trim();
+  if (teamAnswers[team]) {
+    alert("Team " + team + " hat schon gewählt.");
+    return;
+  }
+  teamAnswers[team] = answer;
+
+  if (teamAnswers['A'] !== undefined && teamAnswers['B'] !== undefined) {
+    const expl = document.getElementById("explanation");
+    const currentQ = questions[current];
+    const teamAResult = teamAnswers['A'] === correct;
+    const teamBResult = teamAnswers['B'] === correct;
+    expl.innerHTML = `
+      Team A: ${teamAResult ? "Richtig" : "Falsch"}<br/>
+      Team B: ${teamBResult ? "Richtig" : "Falsch"}<br/><br/>
+      ${currentQ.explanation}
+    `;
+    expl.style.color = "black";
+  }
+}
+    const expl = document.getElementById("explanation");
+    const currentQ = questions[current];
+    if (answer === correct) {
+      expl.textContent = "Richtig! " + currentQ.explanation;
+      expl.style.color = "green";
+    } else {
+      expl.textContent = "Leider falsch! " + currentQ.explanation;
+      expl.style.color = "red";
+    }
+  }
+
+  function selectTeam(button, team) {
+    const buttons = button.parentElement.querySelectorAll('button');
+    buttons.forEach(btn => btn.classList.remove("active"));
+    button.classList.add("active");
+  }
+
+  function nextQuestion() {
+  teamAnswers = {};
+    current++;
+    if (current < questions.length) {
+      loadQuestion(current);
+    } else {
+      container.innerHTML = '<div class="quiz-page active"><h2>Quiz beendet!</h2><p>Ihr seid tolle Umweltdetektive!</p></div>';
+    }
+  }
+
+  loadQuestion(current);
+</script>
+
+</body>
+</html>
